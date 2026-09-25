@@ -1,0 +1,1752 @@
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>拾页免费小说</title>
+<style>
+/* ================= 基础变量 ================= */
+:root{
+  --brand:#ff5722;
+  --brand2:#ff8a3d;
+  --bg:#f6f6f8;
+  --card:#ffffff;
+  --text:#1a1a1a;
+  --sub:#9a9aa5;
+  --line:#eeeeee;
+  --radius:14px;
+  --shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;border:none;background:none;cursor:pointer;color:inherit}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* ================= 通用布局 ================= */
+.page{
+  max-width:640px;margin:0 auto;
+  padding-bottom:76px;min-height:100vh;
+  background:var(--bg);
+}
+
+/* 顶部搜索栏 */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  padding:12px 16px 14px;
+  display:flex;align-items:center;gap:10px;
+}
+.topbar .brand{
+  color:#fff;font-size:17px;font-weight:700;letter-spacing:.02em;white-space:nowrap;
+}
+.search-box{
+  flex:1;height:36px;border-radius:18px;background:rgba(255,255,255,.92);
+  display:flex;align-items:center;padding:0 14px;gap:8px;
+  color:var(--sub);font-size:13.5px;
+}
+.search-box svg{flex-shrink:0;opacity:.55}
+
+/* ================= 首页 ================= */
+.section{padding:18px 16px 4px}
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:13px;
+}
+.section-title{font-size:17px;font-weight:700;letter-spacing:.01em}
+.section-title span{font-size:12px;color:var(--sub);font-weight:400;margin-left:7px}
+.more-link{font-size:12.5px;color:var(--sub);display:flex;align-items:center;gap:2px}
+
+/* 轮播 */
+.banner{
+  display:flex;gap:12px;overflow-x:auto;padding:14px 16px 6px;
+  scroll-snap-type:x mandatory;scrollbar-width:none;
+}
+.banner::-webkit-scrollbar{display:none}
+.banner-card{
+  flex:0 0 84%;scroll-snap-align:center;
+  height:132px;border-radius:var(--radius);overflow:hidden;
+  position:relative;display:flex;align-items:center;gap:14px;
+  padding:18px;color:#fff;cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,.14);
+}
+.banner-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 70%);
+}
+.banner-card .bc-cover{
+  width:64px;height:88px;border-radius:8px;flex-shrink:0;
+  position:relative;z-index:1;
+  box-shadow:0 4px 14px rgba(0,0,0,.35);
+}
+.banner-card .bc-info{position:relative;z-index:1;min-width:0}
+.banner-card .bc-title{
+  font-size:16px;font-weight:700;margin-bottom:7px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.banner-card .bc-desc{
+  font-size:12px;opacity:.85;line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+/* 分类快捷入口 */
+.cat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  padding:0 16px;margin-top:6px;
+}
+.cat-item{
+  background:var(--card);border-radius:12px;padding:12px 6px;
+  text-align:center;font-size:12.5px;color:var(--text);
+  box-shadow:var(--shadow);cursor:pointer;transition:transform .18s;
+}
+.cat-item:active{transform:scale(.95)}
+.cat-item .ci-icon{
+  font-size:19px;display:block;margin-bottom:6px;
+}
+
+/* 横向书单 */
+.hscroll{
+  display:flex;gap:13px;overflow-x:auto;padding:0 16px 6px;
+  scrollbar-width:none;
+}
+.hscroll::-webkit-scrollbar{display:none}
+.hbook{
+  flex:0 0 92px;cursor:pointer;transition:transform .2s;
+}
+.hbook:active{transform:scale(.96)}
+.hbook .hcover{
+  width:92px;height:124px;border-radius:9px;
+  margin-bottom:8px;box-shadow:0 4px 12px rgba(0,0,0,.12);
+  display:flex;align-items:center;justify-content:center;
+  padding:8px;overflow:hidden;position:relative;
+}
+.hbook .hcover span{
+  color:#fff;font-size:13px;font-weight:600;letter-spacing:.08em;
+  writing-mode:vertical-rl;text-shadow:0 1px 6px rgba(0,0,0,.4);
+  max-height:88%;overflow:hidden;
+}
+.hbook .hname{
+  font-size:12.5px;font-weight:600;line-height:1.35;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.hbook .hauthor{font-size:11px;color:var(--sub);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 榜单列表 */
+.rank-list{display:flex;flex-direction:column;gap:2px}
+.rank-item{
+  display:flex;gap:13px;padding:12px;border-radius:12px;
+  cursor:pointer;transition:background .18s;align-items:center;
+}
+.rank-item:active{background:rgba(0,0,0,.03)}
+.rank-no{
+  width:22px;text-align:center;font-size:15px;font-weight:700;
+  font-style:italic;color:var(--sub);flex-shrink:0;
+}
+.rank-no.top{color:var(--brand)}
+.rank-cover{
+  width:56px;height:76px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;padding:6px;
+  box-shadow:0 3px 10px rgba(0,0,0,.12);
+}
+.rank-cover span{
+  color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;
+  writing-mode:vertical-rl;text-shadow:0 1px 5px rgba(0,0,0,.4);
+  max-height:88%;overflow:hidden;
+}
+.rank-info{flex:1;min-width:0}
+.rank-name{font-size:14.5px;font-weight:600;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-desc{
+  font-size:12px;color:var(--sub);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-bottom:6px;
+}
+.rank-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{
+  font-size:10.5px;padding:2px 7px;border-radius:4px;
+  background:rgba(255,87,34,.09);color:var(--brand);
+}
+.tag.gray{background:rgba(0,0,0,.05);color:var(--sub)}
+
+/* ================= 分类页 ================= */
+.cat-tabs{
+  display:flex;gap:8px;overflow-x:auto;padding:14px 16px 10px;
+  scrollbar-width:none;position:sticky;top:0;background:var(--bg);z-index:10;
+}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{
+  flex-shrink:0;padding:7px 15px;border-radius:16px;
+  background:var(--card);font-size:13px;color:var(--sub);
+  box-shadow:var(--shadow);transition:.18s;
+}
+.cat-tab.on{
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  color:#fff;font-weight:600;
+}
+.book-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+  gap:16px 12px;padding:8px 16px;
+}
+.gbook{cursor:pointer;transition:transform .2s}
+.gbook:active{transform:scale(.96)}
+.gcover{
+  aspect-ratio:3/4;border-radius:10px;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;padding:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);overflow:hidden;
+}
+.gcover span{
+  color:#fff;font-size:13px;font-weight:600;letter-spacing:.1em;
+  writing-mode:vertical-rl;text-shadow:0 1px 6px rgba(0,0,0,.4);
+  max-height:86%;overflow:hidden;
+}
+.gname{font-size:12.5px;font-weight:600;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gauthor{font-size:11px;color:var(--sub);margin-top:3px}
+
+/* ================= 书籍详情页 ================= */
+.detail-hero{
+  position:relative;padding:22px 18px 24px;
+  background:linear-gradient(160deg,var(--brand),var(--brand2));
+  color:#fff;overflow:hidden;
+}
+.detail-hero::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 80% 0%,rgba(255,255,255,.22),transparent 60%);
+}
+.detail-inner{position:relative;z-index:1;display:flex;gap:16px}
+.detail-cover{
+  width:96px;height:130px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;padding:10px;
+  box-shadow:0 8px 22px rgba(0,0,0,.3);overflow:hidden;
+}
+.detail-cover span{
+  color:#fff;font-size:15px;font-weight:700;letter-spacing:.12em;
+  writing-mode:vertical-rl;text-shadow:0 2px 8px rgba(0,0,0,.4);
+  max-height:88%;overflow:hidden;
+}
+.detail-meta{flex:1;min-width:0;padding-top:2px}
+.detail-title{font-size:19px;font-weight:700;line-height:1.35;margin-bottom:10px}
+.detail-author{font-size:12.5px;opacity:.9;margin-bottom:9px}
+.detail-stats{display:flex;gap:14px;font-size:11.5px;opacity:.9;margin-bottom:11px}
+.detail-tags{display:flex;gap:6px;flex-wrap:wrap}
+.detail-tags .tag{background:rgba(255,255,255,.22);color:#fff}
+
+.back-btn{
+  position:absolute;top:14px;left:12px;z-index:5;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,.22);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+
+.detail-body{background:var(--bg);border-radius:16px 16px 0 0;margin-top:-14px;position:relative;z-index:2;padding-top:6px}
+.detail-block{background:var(--card);margin:12px 16px;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.detail-block h3{font-size:15px;font-weight:700;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+.detail-block h3 em{font-style:normal;font-size:12px;color:var(--sub);font-weight:400}
+.desc-text{font-size:13.5px;line-height:1.75;color:#444}
+.desc-text.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+.chapter-list{display:flex;flex-direction:column}
+.chapter-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--line);
+  font-size:13.5px;cursor:pointer;color:#333;
+}
+.chapter-row:last-child{border-bottom:none}
+.chapter-row.read{color:var(--sub)}
+.chapter-row .cr-right{font-size:11.5px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.chapter-row .new-dot{width:5px;height:5px;border-radius:50%;background:var(--brand)}
+
+.detail-actions{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:640px;
+  background:var(--card);border-top:1px solid var(--line);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  display:flex;gap:10px;z-index:30;
+}
+.btn-main{
+  flex:1;height:44px;border-radius:22px;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  color:#fff;font-size:15px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(255,87,34,.3);
+}
+.btn-sub{
+  height:44px;padding:0 20px;border-radius:22px;
+  border:1px solid var(--line);font-size:14px;color:#555;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  background:var(--card);
+}
+.btn-sub.on{color:var(--brand);border-color:var(--brand);background:rgba(255,87,34,.05)}
+
+/* ================= 阅读器 ================= */
+.reader{
+  position:fixed;inset:0;z-index:100;
+  background:var(--r-bg);color:var(--r-text);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.reader.theme-day{--r-bg:#ffffff;--r-text:#2c2c2c;--r-sub:#999}
+.reader.theme-green{--r-bg:#e3edcd;--r-text:#3a3a3a;--r-sub:#8a9078}
+.reader.theme-night{--r-bg:#1a1a1a;--r-text:#b0b0b0;--r-sub:#666}
+
+.reader-top,.reader-bottom{
+  position:fixed;left:0;right:0;max-width:640px;margin:0 auto;
+  background:var(--r-bg);z-index:10;
+  transition:transform .28s ease,opacity .28s ease;
+}
+.reader-top{
+  top:0;height:54px;display:flex;align-items:center;
+  padding:0 12px;gap:8px;border-bottom:1px solid rgba(128,128,128,.15);
+}
+.reader-top.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
+.reader-top .rt-btn{
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;opacity:.8;border-radius:8px;
+}
+.reader-top .rt-title{
+  flex:1;text-align:center;font-size:14px;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.reader-bottom{
+  bottom:0;border-top:1px solid rgba(128,128,128,.15);
+  padding:6px 16px calc(8px + env(safe-area-inset-bottom));
+}
+.reader-bottom.hide{transform:translateY(100%);opacity:0;pointer-events:none}
+.rb-progress{
+  display:flex;gap:10px;font-size:11px;color:var(--r-sub);
+  padding:4px 0 6px;align-items:center;
+}
+.rb-bar{flex:1;height:2px;background:rgba(128,128,128,.2);border-radius:2px;overflow:hidden}
+.rb-bar i{display:block;height:100%;background:var(--brand);width:0;transition:width .15s}
+.rb-actions{display:flex;justify-content:space-around;padding:6px 0}
+.rb-actions button{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:11px;color:var(--r-text);opacity:.85;padding:4px 12px;
+}
+.rb-actions button i{font-style:normal;font-size:18px}
+
+.reader-content{
+  max-width:640px;margin:0 auto;
+  padding:74px 22px 120px;
+}
+.reader-content h1{
+  font-size:calc(var(--r-fs) * 1.25);font-weight:700;
+  line-height:1.5;margin-bottom:26px;letter-spacing:.02em;
+}
+.reader-content p{
+  font-family:var(--r-font);
+  font-size:var(--r-fs);line-height:var(--r-lh);
+  margin-bottom:1em;text-align:justify;text-indent:2em;
+  word-break:break-word;
+}
+.reader-nav{
+  display:flex;gap:12px;margin-top:44px;padding-top:24px;
+  border-top:1px solid rgba(128,128,128,.15);
+}
+.reader-nav button{
+  flex:1;padding:13px;border-radius:10px;
+  border:1px solid rgba(128,128,128,.25);
+  font-size:13.5px;color:var(--r-text);
+}
+.reader-nav button:disabled{opacity:.3}
+
+/* 阅读器抽屉 */
+.r-drawer{
+  position:fixed;top:0;bottom:0;width:300px;max-width:82vw;
+  background:var(--card);z-index:120;
+  transform:translateX(-102%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+}
+.r-drawer.open{transform:none}
+.r-drawer-head{
+  padding:18px;font-size:15px;font-weight:700;
+  border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.r-drawer-head em{font-style:normal;font-size:11.5px;color:var(--sub);font-weight:400}
+.r-drawer-list{overflow-y:auto;flex:1;padding:6px 0}
+.r-drawer-item{
+  display:block;padding:13px 18px;font-size:13.5px;color:#555;
+  border-left:3px solid transparent;
+}
+.r-drawer-item.active{color:var(--brand);border-left-color:var(--brand);background:rgba(255,87,34,.06);font-weight:600}
+
+.mask{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:110;
+  opacity:0;pointer-events:none;transition:opacity .28s;
+}
+.mask.show{opacity:1;pointer-events:auto}
+
+/* 设置面板 */
+.set-panel{
+  position:fixed;bottom:0;left:50%;transform:translate(-50%,102%);
+  width:100%;max-width:640px;background:var(--card);
+  border-radius:18px 18px 0 0;z-index:130;
+  padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 -6px 30px rgba(0,0,0,.16);
+}
+.set-panel.open{transform:translate(-50%,0)}
+.set-row{display:flex;align-items:center;gap:14px;padding:11px 0}
+.set-label{font-size:13px;color:var(--sub);width:38px;flex-shrink:0}
+.set-group{display:flex;gap:8px;flex:1;align-items:center}
+.set-chip{
+  padding:7px 15px;border-radius:18px;font-size:13px;
+  background:#f2f2f4;color:#555;transition:.18s;
+}
+.set-chip.on{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:600}
+.set-circle{
+  width:30px;height:30px;border-radius:50%;border:2px solid transparent;
+  cursor:pointer;transition:.18s;
+}
+.set-circle.on{border-color:var(--brand);transform:scale(1.08)}
+.set-step{
+  width:34px;height:34px;border-radius:50%;background:#f2f2f4;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:600;
+}
+.set-value{min-width:32px;text-align:center;font-size:13.5px;font-variant-numeric:tabular-nums}
+
+/* ================= 书架 / 我的 ================= */
+.empty{
+  text-align:center;padding:90px 30px;color:var(--sub);
+}
+.empty .e-icon{font-size:52px;opacity:.35;margin-bottom:16px}
+.empty p{font-size:14px;margin-bottom:20px}
+.empty button{
+  padding:10px 28px;border-radius:22px;font-size:14px;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:600;
+}
+
+.shelf-list{display:flex;flex-direction:column;gap:2px;padding:6px 8px}
+.shelf-item{
+  display:flex;gap:13px;padding:13px 10px;border-radius:12px;cursor:pointer;
+  transition:background .18s;position:relative;
+}
+.shelf-item:active{background:rgba(0,0,0,.03)}
+.shelf-cover{
+  width:58px;height:78px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;padding:6px;
+  box-shadow:0 3px 10px rgba(0,0,0,.12);overflow:hidden;
+}
+.shelf-cover span{
+  color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;
+  writing-mode:vertical-rl;text-shadow:0 1px 5px rgba(0,0,0,.4);
+  max-height:88%;overflow:hidden;
+}
+.shelf-info{flex:1;min-width:0;padding-top:2px}
+.shelf-name{font-size:14.5px;font-weight:600;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shelf-author{font-size:11.5px;color:var(--sub);margin-bottom:7px}
+.shelf-prog{font-size:11.5px;color:var(--brand)}
+.shelf-del{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:12px;color:var(--sub);padding:6px 10px;
+}
+
+/* 我的页面 */
+.mine-head{
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  padding:36px 20px 30px;color:#fff;
+  display:flex;align-items:center;gap:14px;
+}
+.mine-avatar{
+  width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+}
+.mine-name{font-size:17px;font-weight:700;margin-bottom:5px}
+.mine-sub{font-size:12px;opacity:.85}
+.mine-list{background:var(--card);margin:12px 16px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.mine-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 16px;font-size:14px;border-bottom:1px solid var(--line);cursor:pointer;
+}
+.mine-row:last-child{border-bottom:none}
+.mine-row .mr-left{display:flex;align-items:center;gap:11px}
+.mine-row .mr-icon{font-size:17px;width:22px;text-align:center}
+.mine-row .mr-right{font-size:12.5px;color:var(--sub)}
+
+/* ================= 底部导航 ================= */
+.tabbar{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:640px;background:var(--card);
+  border-top:1px solid var(--line);z-index:40;
+  display:flex;padding-bottom:env(safe-area-inset-bottom);
+}
+.tab-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:8px 0 7px;font-size:10.5px;color:var(--sub);transition:color .18s;
+}
+.tab-item .ti-icon{font-size:19px;line-height:1}
+.tab-item.on{color:var(--brand);font-weight:600}
+.tabbar.hide{display:none}
+
+/* ================= 搜索页 ================= */
+.search-page{padding:0 0 40px}
+.search-bar{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:var(--card);position:sticky;top:0;z-index:20;
+  border-bottom:1px solid var(--line);
+}
+.search-bar input{
+  flex:1;height:38px;border-radius:19px;border:none;
+  background:#f2f2f4;padding:0 16px;font-size:14px;outline:none;
+  color:var(--text);
+}
+.search-bar button{font-size:14px;color:var(--brand);font-weight:600}
+.hot-words{padding:18px 16px}
+.hot-words h4{font-size:13.5px;color:var(--sub);font-weight:400;margin-bottom:12px}
+.hot-tags{display:flex;flex-wrap:wrap;gap:9px}
+.hot-tag{
+  padding:7px 15px;border-radius:16px;background:var(--card);
+  font-size:13px;box-shadow:var(--shadow);
+}
+
+/* 顶部导航返回 */
+.nav-back{
+  display:flex;align-items:center;gap:8px;padding:12px 16px;
+  font-size:15px;font-weight:600;background:var(--bg);
+  position:sticky;top:0;z-index:20;
+}
+.nav-back .nb-icon{font-size:18px}
+
+/* 加载更多 */
+.load-more{
+  text-align:center;padding:18px;font-size:13px;color:var(--sub);
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="tabbar"></div>
+
+<script>
+/* ==========================================================
+   一、书籍数据（替换成你自己的小说即可）
+   ========================================================== */
+const BOOKS = [
+  {
+    id:'b1', title:'重生之都市战神', author:'夜北辰',
+    c1:'#ff6b4a', c2:'#c92a2a',
+    cat:'都市', tags:['热血','逆袭','爽文'],
+    status:'连载中', words:'286万字',
+    desc:'五年前，他被家族驱逐，身负重伤流落海外。五年后，他带着一身荣耀归来，却发现一切都已物是人非。昔日的仇人高高在上，昔日的爱人即将嫁作他人妇。这一次，他要用拳头拿回属于自己的一切。',
+    chapters:[
+      {title:'第一章 五年之后', paras:[
+        '江城国际机场，一架私人飞机缓缓降落。',
+        '舷梯放下，一个穿着黑色风衣的男人走了下来。他身材挺拔，眉眼锋利，周身散发着一股生人勿近的气场。',
+        '五年了。江城的天，还是那个天；江城的云，还是那片云。可他林北，已经不再是当年那个被人踩在脚下的废物。',
+        '“少爷，车已经备好了。”身后传来恭敬的声音。',
+        '林北没有回头，只是望着远处鳞次栉比的楼宇，淡淡开口：“去林家。”'
+      ]},
+      {title:'第二章 故人重逢', paras:[
+        '林家的老宅坐落在城东的半山腰上，青砖灰瓦，气势依旧。',
+        '只是今天，门口停满了豪车。',
+        '林北站在门外，看着那块写着“林府”的牌匾，嘴角勾起一抹冷笑。五年前，他就是在这里被人拖出去，像一条丧家之犬。',
+        '“站住！什么人？”门卫拦住了他。',
+        '林北抬眼，正要说话，身后忽然传来一个熟悉的声音——',
+        '“林北？真的是你？”'
+      ]},
+      {title:'第三章 一拳之威', paras:[
+        '转身的瞬间，林北看见了那张熟悉的脸。',
+        '苏晚晴。',
+        '五年不见，她还是那么好看，只是眼底多了一丝疲惫。她穿着一身素色的长裙，站在台阶下，怔怔地看着他。',
+        '“你回来了。”她说。',
+        '林北还没来得及回答，一个阴阳怪气的声音就插了进来：“哟，这不是林家的那位‘天才’吗？怎么，国外的饭不好吃，回来讨饭了？”',
+        '一个穿着白西装的年轻人从门里走出来，身后跟着一群看热闹的宾客。',
+        '林北认得他。周家的周明轩，五年前踩他踩得最狠的那个。',
+        '周明轩走到他面前，居高临下地看着他：“五年不见，混得怎么样啊？”',
+        '林北没说话，只是伸出一只手，轻轻按在了旁边的石狮子上。',
+        '“咔嚓——”',
+        '石狮子的底座，裂开了一道缝。'
+      ]},
+      {title:'第四章 我不需要证明', paras:[
+        '全场安静了三秒。',
+        '周明轩脸上的笑容僵住了，下意识地往后退了半步。',
+        '“你……你什么意思？”',
+        '林北收回手，拍了拍掌心的灰，语气平淡：“没什么意思。就是告诉你，有些东西，不需要证明。”',
+        '他绕过周明轩，往门里走去。',
+        '“林北！”周明轩在后面喊，“你以为你算什么东西？这里不欢迎你！”',
+        '林北停下脚步，没有回头。',
+        '“欢迎不欢迎，不是你说了算的。”',
+        '说完，他一步跨进了林家的大门。'
+      ]},
+      {title:'第五章 老爷子的决定', paras:[
+        '林家的正厅里，坐满了人。',
+        '主位上的老人头发已经全白，但腰背依旧挺得笔直。他叫林正国，是林家的家主，也是当年亲手把林北赶出去的人。',
+        '看见林北走进来，厅里的议论声戛然而止。',
+        '林正国眯起眼睛，打量了这个孙子许久，才缓缓开口：“你回来做什么？”',
+        '林北站在厅中央，迎着满堂或惊讶或鄙夷的目光，平静地说：“拿回属于我的东西。”',
+        '“就凭你？”有人冷笑。',
+        '林北转头，看了那人一眼。',
+        '只是一眼，那人就像被掐住了脖子，再也说不出一个字。',
+        '林正国沉默了很久，忽然笑了：“好，好啊。你若是能让林家度过这次难关，家主之位，就是你的。”'
+      ]}
+    ]
+  },
+  {
+    id:'b2', title:'星际拾荒者', author:'陆沉',
+    c1:'#6b5bd2', c2:'#1c1740',
+    cat:'科幻', tags:['星际','冒险','热血'],
+    status:'连载中', words:'178万字',
+    desc:'在人类文明废弃的星域里，捡垃圾是最底层的营生。直到陈默在一艘坠毁的军舰里，捡到了一枚会说话的核心芯片。从那天起，他的命运，就和整个银河系绑在了一起。',
+    chapters:[
+      {title:'第一章 废星上的早晨', paras:[
+        '灰白色的尘埃从天空落下来，像一场永远下不完的雪。',
+        '陈默戴好护目镜，把氧气面罩扣在脸上，推开舱门走了出去。',
+        '这里是K-7废弃星域，人类文明扩张时期留下的垃圾场。每年都有成千上万像他一样的人来到这里，靠捡拾废弃舰船的零件为生。',
+        '“今天的风比昨天大。”他在通讯器里对同伴说。',
+        '“少废话，快点干活。飞船下午就得走。”',
+        '陈默弯下腰，扒开一堆扭曲的金属板。忽然，他的手指碰到了一个冰凉的东西。',
+        '那是一枚巴掌大小的芯片，表面泛着幽蓝的光。'
+      ]},
+      {title:'第二章 会说话的芯片', paras:[
+        '“嘶——痛死我了！你能不能轻点？”',
+        '陈默吓了一跳，差点把手里的芯片扔出去。',
+        '“谁？谁在说话？”',
+        '“废话，当然是本大爷。”芯片上的蓝光闪了闪，“我说你这人怎么这么粗鲁，我可是价值连城的——”',
+        '“你是什么东西？”陈默把它举到眼前。',
+        '“东西？”芯片的音调陡然拔高，“我可不是东西！我是‘先驱者’级战舰的主控核心，编号A-07，曾经指挥过十七次星际战役！”',
+        '陈默沉默了两秒，把它塞进口袋。',
+        '“喂！你干嘛！”',
+        '“卖了。”陈默说，“一块会说话的芯片，应该能换不少钱。”'
+      ]},
+      {title:'第三章 它说得对', paras:[
+        '那天晚上，陈默躺在狭小的船舱里，翻来覆去睡不着。',
+        '“喂，你睡着了吗？”口袋里传来声音。',
+        '“没有。”',
+        '“那我给你讲个故事吧。”芯片说，“很久以前，这片星域不是这样的。这里有十二颗宜居行星，有上百亿人口，有最繁华的太空城市。”',
+        '“然后呢？”',
+        '“然后，战争来了。那种能把星星都点燃的战争。”芯片的声音低了下去，“我是最后一艘逃出来的船。我带着三十万平民的冷冻舱，在星海里飘了两百年。”',
+        '“他们呢？”',
+        '“都在K-7。”芯片说，“在那些你捡过的废船里。”',
+        '陈默猛地坐了起来。'
+      ]},
+      {title:'第四章 第七区', paras:[
+        '第二天一早，陈默没有去废船区。',
+        '他按照芯片的指引，驾驶着那艘破旧的拾荒船，往星域的深处飞去。',
+        '“你确定是这里？”他看着舷窗外，那是一片看上去毫无异常的虚空。',
+        '“确定。坐标A-17，深度两千。”',
+        '陈默按下了扫描键。屏幕上，一个巨大的阴影慢慢浮现——那是一座城市，一座沉睡在冰层下的太空城市。',
+        '“欢迎来到第七区。”芯片说，“这是他们最后的家。”'
+      ]},
+      {title:'第五章 苏醒', paras:[
+        '城市里没有光，只有一排排整齐的冷冻舱，像墓碑一样延伸到视野的尽头。',
+        '陈默走在寂静的街道上，脚步声回荡在空荡荡的穹顶下。',
+        '“还有多少活着？”他问。',
+        '“一百二十七万。”芯片说，“冷冻系统的寿命还剩三年。”',
+        '“三年之后呢？”',
+        '“他们就会永远醒不过来了。”',
+        '陈默走到最近的一个冷冻舱前。玻璃后面，是一个七八岁的孩子，脸上还带着睡梦中的微笑。',
+        '“怎么救他们？”',
+        '“启动城市核心。”芯片顿了顿，“但那需要一整套加密协议，而我……已经忘了。”',
+        '“那你记得什么？”',
+        '“我记得，你是第一个听到我说话的人。”芯片说，“也许，这就是答案。”'
+      ]}
+    ]
+  },
+  {
+    id:'b3', title:'青瓦巷的春天', author:'沈知微',
+    c1:'#5f9e7a', c2:'#17342a',
+    cat:'都市', tags:['温情','治愈','生活'],
+    status:'已完结', words:'86万字',
+    desc:'一条老街，几户人家。修伞的顾老头、卖豆浆的吴老板、捡梧桐子的孩子……青瓦巷的日子平淡如水，却总能在某个不经意的瞬间，让人热泪盈眶。',
+    chapters:[
+      {title:'第一章 修伞的人', paras:[
+        '青瓦巷三号的门脸很窄，窄得只能摆下一张桌子和一把竹椅。',
+        '桌上放着钳子、铁丝、几块旧伞布。椅背上挂着十几把伞，颜色杂得像一条打翻的调色盘。',
+        '修伞的老头姓顾，七十多岁，耳朵背，手却稳。他修伞只收两块钱，多了不要。',
+        '有姑娘来修一把断了骨的油纸伞，说是外婆留下的。顾老头看了半天，说，这把伞不是坏了，是放太久了。',
+        '姑娘问，那怎么办。他说，得用起来。伞不用，骨头会自己断。',
+        '那年春天雨多。巷子里的人忽然发现，自家的旧伞都被翻了出来，撑在门口，五颜六色的，像一夜之间开满了花。'
+      ]},
+      {title:'第二章 楼下那棵树', paras:[
+        '楼下那棵梧桐是整条巷子最老的住户，比巷口的邮筒还老。',
+        '每年春天它都掉毛，毛毛飘进窗户，飘进汤里，飘进人的梦里。有人抱怨，有人骂，也有人搬走了。',
+        '只有一个小孩每天下楼，蹲在树根边上，把落下来的梧桐子捡进铁盒。',
+        '他妈妈说，你捡那个干什么。他说，我要种一棵树，等它长大，就没人记得原来那棵了。',
+        '那年夏天，巷子要改造成步行街。推土机来的时候，全巷的人都出来了，站在树下面，什么也不说。',
+        '最后树留下了。树底下多了一块小牌子，上面写着：这棵树，已经在这里站了六十年。'
+      ]},
+      {title:'第三章 卖豆浆的早晨', paras:[
+        '巷口的豆浆摊五点开张，六点半收摊，卖完为止。',
+        '摊主姓吴，一碗豆浆配一根油条，三块五。他说这个价钱是十年前定的，改不了，改了就没人认识了。',
+        '常客里有个上夜班的女护士，每天六点来，要一碗咸豆浆，多放虾皮。她总是站着喝完就走。',
+        '还有个上高三的男孩，每天六点二十来，要一碗甜的，不加糖。',
+        '他们从来没说过话。直到有一天，男孩把一张纸条压在碗底，上面写着：姐姐，我考上医学院了。',
+        '女护士那天站在摊前喝完豆浆，眼睛红了。吴老板装作没看见，多给了她一根油条。'
+      ]},
+      {title:'第四章 灯坏了', paras:[
+        '巷子里的路灯坏了一盏，就在三号和五号中间。',
+        '晚上走过那里，黑得伸手不见五指。有人给居委会打电话，居委会说排期要到下个月。',
+        '第二天，灯亮了。',
+        '谁也不知道是谁修的。有人说是顾老头，因为他那天晚上拿着梯子出门了。也有人说是吴老板，因为他摊子上少了一截电线。',
+        '后来有人问起，顾老头摆摆手，说我耳朵背，听不见。吴老板笑了笑，说我只管豆浆。',
+        '只有那个捡梧桐子的小孩，蹲在灯下面，仰着头看了很久。'
+      ]},
+      {title:'第五章 春天来了', paras:[
+        '三月的风一吹，青瓦巷就活了。',
+        '梧桐树抽出了新芽，绿得发亮。巷子两边的窗台上，摆满了刚洗过的花盆。',
+        '顾老头的伞摊前，排起了长队。吴老板的豆浆摊，每天不到六点半就卖光了。',
+        '那个上医学院的男孩放假回来了，站在豆浆摊前，跟女护士打了个招呼。女护士愣了一下，笑着问他，甜的咸的？',
+        '男孩说，甜的。',
+        '巷子的尽头，那棵老梧桐树下，有人新种了一棵小树苗。',
+        '风一吹，两棵树的叶子一起响。'
+      ]}
+    ]
+  },
+  {
+    id:'b4', title:'剑与灯', author:'江砚',
+    c1:'#9c4a3c', c2:'#2b1210',
+    cat:'武侠', tags:['江湖','恩怨','短篇'],
+    status:'已完结', words:'52万字',
+    desc:'雪下了三天，把雁回城埋得只剩下一排排屋脊。城西的客栈里，坐着一个背剑的人。他在等人，等一个据说不会来的人。而那个拄灯的瞎子，推门走了进来。',
+    chapters:[
+      {title:'第一章 雪夜', paras:[
+        '雪下了三天，把雁回城埋得只剩下一排排屋脊。',
+        '城西的客栈里，坐着一个背剑的人。他要了一壶酒，一整夜没喝。',
+        '子时，门开了。进来的是个拄灯的瞎子，灯是纸糊的，四角破了洞，风一吹就晃。',
+        '瞎子在他对面坐下，说，你在等人。背剑的人说，是。瞎子说，那人不会来了。',
+        '背剑的人握住剑柄。瞎子把灯往前推了推，说，你看清楚，我是不是你要等的人。',
+        '灯芯一亮，客栈里所有的影子都倒了个方向。'
+      ]},
+      {title:'第二章 灯下客', paras:[
+        '那盏灯走到哪里，哪里就没有黑夜。',
+        '所以江湖上人人都想要它。有人出千金，有人出人命。',
+        '瞎子把灯挂在竹杖上，一路向南。他跟人说自己不是瞎子，只是不想看。',
+        '有人问他，你不想看什么。他说，看过的东西，会一直亮着，灭不掉。',
+        '追他的人越来越多。到第七天，他把灯放在一座桥的中间，自己走了。',
+        '桥上的灯亮了一整夜。第二天早上，灯还在，追灯的人全都不见了。'
+      ]},
+      {title:'第三章 最后一剑', paras:[
+        '天下第一的剑客姓谢，四十岁那年，他决定不再用剑。',
+        '他回到故乡，开了一间铁匠铺，打锄头、打菜刀、打门环。',
+        '有人来挑战，他不接。有人骂他，他也不恼。有人在他铺子门口站了三天三夜，他就递了把凳子出去。',
+        '直到有一年，山里的匪徒下了山，烧了半个镇子。',
+        '谢铁匠从炉子里抽出一根烧红的铁条，走出去。他没有用剑，因为铺子里已经没有剑了。',
+        '匪首看着他，忽然扔了刀，跪下了。他说，二十年前，我见过您。',
+        '那天晚上，谢铁匠回到铺子里，把炉子重新烧热。他给自己打了一把剑，挂在墙上，再没取下来。'
+      ]},
+      {title:'第四章 归途', paras:[
+        '背剑的人姓沈，他找那个瞎子，已经找了十二年。',
+        '十二年前，他的师父死在一盏灯下面。那盏灯亮起来的时候，师父说了一句，别看。',
+        '沈公子没有看。但他知道，师父看了。',
+        '所以这十二年，他一直在找那盏灯。他要看看，那灯里到底有什么。',
+        '他终于找到了。灯就在他面前，亮着。',
+        '他伸出手，遮住了眼睛。',
+        '灯灭了。'
+      ]},
+      {title:'第五章 雪停了', paras:[
+        '天亮的时候，雪停了。',
+        '雁回城的屋顶上，落了一层薄薄的阳光。',
+        '客栈的伙计推开西厢房的门，里面空无一人。桌上那壶酒还在，一滴未动。',
+        '窗台上放着一样东西——一盏纸糊的灯，四角破了洞，里面没有烛。',
+        '伙计拿起来看了看，觉得没什么用，就扔进了灶膛。',
+        '火苗窜起来的时候，整间客栈亮了一瞬。',
+        '然后，一切如常。'
+      ]}
+    ]
+  },
+  {
+    id:'b5', title:'山海拾遗', author:'白露',
+    c1:'#4a7ba7', c2:'#16283a',
+    cat:'玄幻', tags:['志怪','奇谈','短篇'],
+    status:'连载中', words:'64万字',
+    desc:'七月十四，陈三的船在芦苇荡里迷了路。雾从水面浮上来，稠得像化不开的米汤。船尾的缆绳上，不知何时多了一盏灯笼。',
+    chapters:[
+      {title:'第一章 夜行船', paras:[
+        '七月十四，陈三的船在芦苇荡里迷了路。雾从水面浮上来，稠得像化不开的米汤，两岸的灯一盏接一盏地灭了。',
+        '他划了半宿，橹声在水上撞出闷响，却始终撞不见岸。船头的马灯芯子烧得只剩一点豆大的黄，照见水里有一团白影，随着橹的节奏一浮一沉。',
+        '陈三把橹放轻了。那白影慢慢转过来，是一盏灯笼——纸糊的，四角描着褪色的云纹，里面没有烛，却亮着。',
+        '灯笼漂到他船边，停住了。陈三想起他爹说过的话：水上遇见不要钱的东西，千万别伸手。',
+        '他别过脸，继续摇橹。摇到天亮，雾散了，芦苇荡的尽头是自家的码头。他回头看了一眼，船尾的缆绳上，整整齐齐地系着那盏灯笼。',
+        '后来陈三活到八十七岁。临终那晚，他让人把灯笼取下来点着。屋里的人都看见，那火苗是白的，冷得没有一点温度，却把整间屋子照得清清楚楚。'
+      ]},
+      {title:'第二章 无字碑', paras:[
+        '山下有块碑，无字。村里人说是前朝留下的，也有人说，是给一个走丢的人立的。',
+        '石匠老周不信。他年轻时候凿过上百块碑，知道碑上的字不是磨掉的，是从来没刻过。',
+        '有一年大旱，碑裂了。裂缝里渗出水来，清得很，够全村喝一个月。喝完水的人都说，夜里梦见一个穿青衫的书生，站在碑前写字，一笔一划，写到一半就停了。',
+        '老周也梦见了。他问书生：你写的什么。书生说：名字。老周又问：谁的名字。书生笑了笑：等我写完，你就知道了。',
+        '水断的那天，老周拿了凿子下山。他在碑上刻了自己的名字。刻完最后一笔，天阴了，下了一场透雨。',
+        '后来那块碑上，字迹慢慢显出来，密密麻麻，全是名字。村里每一个人的都在。只有最上面一行，是空的。'
+      ]},
+      {title:'第三章 借灯人', paras:[
+        '镇上有个规矩：大年三十的夜里，不点自家的灯，要去村口的祠堂借一盏。',
+        '借来的灯只能亮一夜，天亮之前必须还回去，还得原封不动，连灯芯烧掉多少都有讲究。',
+        '有人说这是老规矩，图个吉利。也有人说，这规矩是拿命换来的。',
+        '那年除夕，一个外乡人路过，非要借一盏。守祠堂的老头拦不住，就给了他。',
+        '第二天清早，外乡人没来还灯。祠堂里少了一盏，也少了一个牌位。牌位上原本刻着的名字，谁也记不起来了。',
+        '从那以后，镇上的孩子都要背一句话：灯可以借，名字不能借。'
+      ]},
+      {title:'第四章 纸人', paras:[
+        '扎纸人的手艺，传到老陈这里，已经是第五代了。',
+        '他扎的纸人，眉眼都有讲究。男的要有骨，女的要有神，小孩要有灵气。扎好了，点上一炷香，放在灵前，三天之后才能烧。',
+        '有天夜里，他听见作坊里有动静。',
+        '推门进去，一个刚扎好的纸人，正坐在他的椅子上，翻他的账本。',
+        '老陈没说话，退出去，把门带上了。',
+        '第二天，他把那个纸人烧了。烧的时候，火里传出一声很轻的叹息。',
+        '从那以后，他扎纸人，再不给眉眼。'
+      ]},
+      {title:'第五章 山中来客', paras:[
+        '那天下着雨，山路上来了一个人。',
+        '他穿着一件很旧的青衫，背着一个竹篓，走到村口，问有没有地方可以借宿。',
+        '老李头把他领回了家。晚上吃饭的时候，问他从哪里来。',
+        '那人说，从山那边。',
+        '老李头说，山那边没有人家啊。',
+        '那人笑了笑，说，有的，只是你们看不见。',
+        '第二天早上，老李头醒来，那人已经不在了。桌上留着一小袋米，还有一片干透了的青苔。',
+        '后来老李头才知道，那片青苔，是山上那座废弃山神庙的。'
+      ]}
+    ]
+  },
+  {
+    id:'b6', title:'她的夏天', author:'温言',
+    c1:'#e07a9a', c2:'#7a2f4d',
+    cat:'言情', tags:['青春','暗恋','治愈'],
+    status:'连载中', words:'72万字',
+    desc:'高二那年的夏天，林夏在图书馆遇见了顾屿。他坐在靠窗的位置，阳光落在他翻书的手上。从那天起，她的整个夏天，都有了名字。',
+    chapters:[
+      {title:'第一章 靠窗的位置', paras:[
+        '高二那年夏天，林夏第一次走进学校新修的图书馆。',
+        '空调开得很足，她一进门就打了个哆嗦。架子上的书还是新的，散发着油墨的味道。',
+        '她绕过一排排书架，想找个位置坐下，却发现几乎都满了。',
+        '只有靠窗的那一排，还有一个空位。',
+        '空位旁边坐着一个男生，正在低头看书。阳光透过百叶窗，落在他翻书的手上，一格一格的。',
+        '林夏犹豫了一下，还是走了过去。',
+        '她拉开椅子的声音有点大，男生抬起头看了她一眼。',
+        '那一眼，很短。但林夏记了很久。'
+      ]},
+      {title:'第二章 借书卡', paras:[
+        '从那以后，林夏每天中午都去图书馆。',
+        '她总是比那个男生早到一点，占住靠窗的位置，然后假装在看书，等他进来。',
+        '他每天都坐在她对面，很少说话，偶尔会抬头看一眼窗外。',
+        '有一次，他起身去还书，借书卡掉在了地上。',
+        '林夏捡起来，看见上面写着两个字：顾屿。',
+        '她把卡片递过去，他接过来，说了声谢谢。',
+        '那是他们说的第一句话。'
+      ]},
+      {title:'第三章 一场雨', paras:[
+        '六月的一天，放学的时候下起了大雨。',
+        '林夏站在教学楼的走廊上，看着外面的雨幕发呆。她没带伞。',
+        '“一起走吗？”',
+        '她转过头，看见顾屿撑着一把黑色的伞，站在她身后。',
+        '林夏愣了一下，点了点头。',
+        '伞不大，两个人走在里面，肩膀几乎要碰到。林夏能闻到他身上淡淡的洗衣粉味道。',
+        '走了很久，谁都没有说话。',
+        '到她家楼下的时候，顾屿把伞递给她，说：“你拿着吧。”',
+        '然后他就转身跑进了雨里。'
+      ]},
+      {title:'第四章 未寄出的信', paras:[
+        '高三那年，林夏写了一封信。',
+        '信很短，只有几行字。她写了整整一个晚上，改了七遍。',
+        '第二天，她把信装进信封，放在书包里，准备在图书馆交给他。',
+        '但是那天，顾屿没有来。',
+        '第三天，他还是没有来。',
+        '第四天，班主任在班会上说，顾屿同学因为家庭原因，转学了。',
+        '林夏攥着那封信，坐在空荡荡的靠窗位置上，坐了很久。',
+        '窗外，夏天已经过去了。'
+      ]},
+      {title:'第五章 很多年以后', paras:[
+        '很多年以后，林夏在一家书店里，遇见了顾屿。',
+        '他站在文学区的书架前，正在翻一本书。阳光从落地窗照进来，落在他翻书的手上，一格一格的。',
+        '林夏走过去，站在他旁边。',
+        '“好久不见。”她说。',
+        '顾屿转过头，看着她，愣了一下，然后笑了。',
+        '“好久不见。”',
+        '他们聊了很久，从高中聊到现在。临走的时候，林夏从包里拿出一封信。',
+        '信纸已经泛黄了，边角有些磨损。',
+        '“这个，”她说，“迟到了很多年。”'
+      ]}
+    ]
+  }
+];
+
+/* 分类配置 */
+const CATEGORIES = [
+  {key:'全部', icon:'📚'},
+  {key:'都市', icon:'🏙️'},
+  {key:'玄幻', icon:'🐉'},
+  {key:'科幻', icon:'🚀'},
+  {key:'武侠', icon:'⚔️'},
+  {key:'言情', icon:'💗'},
+  {key:'悬疑', icon:'🕵️'},
+  {key:'历史', icon:'🏯'}
+];
+
+/* ==========================================================
+   二、状态管理
+   ========================================================== */
+const app = document.getElementById('app');
+const tabbarEl = document.getElementById('tabbar');
+
+const store = {
+  get(k, d){ try{ const v = JSON.parse(localStorage.getItem(k)); return v===null?d:v; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+
+let shelf = store.get('sy:shelf', []);            // 书架：书籍 id 数组
+let progress = store.get('sy:progress', {});      // 进度：{bookId:{chapter,ratio,time}}
+let settings = Object.assign(
+  {theme:'day', fs:19, lh:1.9, serif:true},
+  store.get('sy:settings', {})
+);
+
+function saveShelf(){ store.set('sy:shelf', shelf); }
+function saveSettings(){ store.set('sy:settings', settings); }
+function saveProgress(bookId, chapter, ratio){
+  progress[bookId] = {chapter, ratio, time: Date.now()};
+  store.set('sy:progress', progress);
+}
+
+/* ==========================================================
+   三、工具函数
+   ========================================================== */
+const byId = id => BOOKS.find(b => b.id === id);
+const coverStyle = b => `background:linear-gradient(150deg,${b.c1},${b.c2})`;
+const catBooks = c => (c === '全部' ? BOOKS : BOOKS.filter(b => b.cat === c));
+
+function parseRoute(){
+  const h = location.hash.replace(/^#/, '') || '/';
+  const p = h.split('/').filter(Boolean);
+  if (p[0] === 'read' && p[1]) return {v:'read', id:p[1], ch: parseInt(p[2],10) || 0};
+  if (p[0] === 'book' && p[1]) return {v:'book', id:p[1]};
+  if (p[0] === 'category') return {v:'category', cat: p[1] ? decodeURIComponent(p[1]) : '全部'};
+  if (p[0] === 'shelf') return {v:'shelf'};
+  if (p[0] === 'mine') return {v:'mine'};
+  if (p[0] === 'search') return {v:'search'};
+  return {v:'home'};
+}
+
+function go(path){ location.hash = '#' + path; }
+
+function scrollTop(){ window.scrollTo(0,0); }
+
+function fmtTime(ts){
+  const d = new Date(ts);
+  return `${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+/* ==========================================================
+   四、通用组件
+   ========================================================== */
+function renderTabbar(active){
+  if (!active){ tabbarEl.classList.add('hide'); tabbarEl.innerHTML=''; return; }
+  tabbarEl.classList.remove('hide');
+  const items = [
+    {k:'home', icon:'🏠', label:'首页', path:'/'},
+    {k:'category', icon:'📖', label:'分类', path:'/category'},
+    {k:'shelf', icon:'📚', label:'书架', path:'/shelf'},
+    {k:'mine', icon:'👤', label:'我的', path:'/mine'}
+  ];
+  tabbarEl.innerHTML = items.map(it => `
+    <div class="tab-item ${it.k===active?'on':''}" data-tab="${it.path}">
+      <span class="ti-icon">${it.icon}</span>
+      <span>${it.label}</span>
+    </div>
+  `).join('');
+  tabbarEl.querySelectorAll('[data-tab]').forEach(el=>{
+    el.addEventListener('click', ()=> go(el.dataset.tab));
+  });
+}
+
+function bookCardHTML(b, extraClass=''){
+  return `
+    <div class="gbook ${extraClass}" data-book="${b.id}">
+      <div class="gcover" style="${coverStyle(b)}"><span>${b.title}</span></div>
+      <div class="gname">${b.title}</div>
+      <div class="gauthor">${b.author}</div>
+    </div>`;
+}
+
+function bindBookLinks(root){
+  root.querySelectorAll('[data-book]').forEach(el=>{
+    el.addEventListener('click', ()=> go('/book/'+el.dataset.book));
+  });
+}
+
+/* ==========================================================
+   五、首页
+   ========================================================== */
+function renderHome(){
+  renderTabbar('home');
+  document.title = '拾页免费小说';
+
+  const featured = BOOKS.slice(0,4);
+  const hot = BOOKS.slice().sort((a,b)=> (progress[b.id]?.time||0) - (progress[a.id]?.time||0));
+  const recommend = BOOKS.slice().sort(()=>Math.random()-0.5).slice(0,6);
+
+  app.innerHTML = `
+    <div class="page">
+      <div class="topbar">
+        <div class="brand">拾页小说</div>
+        <div class="search-box" data-go-search>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+          </svg>
+          <span>搜索书名、作者</span>
+        </div>
+      </div>
+
+      <div class="banner" id="banner">
+        ${featured.map(b=>`
+          <div class="banner-card" style="${coverStyle(b)}" data-book="${b.id}">
+            <div class="bc-cover" style="background:rgba(255,255,255,.22)"></div>
+            <div class="bc-info">
+              <div class="bc-title">${b.title}</div>
+              <div class="bc-desc">${b.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="cat-grid">
+        ${CATEGORIES.slice(1,5).map(c=>`
+          <div class="cat-item" data-cat="${c.key}">
+            <span class="ci-icon">${c.icon}</span>${c.key}
+          </div>
+        `).join('')}
+        ${CATEGORIES.slice(5,9).map(c=>`
+          <div class="cat-item" data-cat="${c.key}">
+            <span class="ci-icon">${c.icon}</span>${c.key}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">热门推荐<span>大家都在看</span></div>
+          <div class="more-link" data-go-cat="全部">更多 ›</div>
+        </div>
+      </div>
+      <div class="hscroll">
+        ${recommend.map(b=>`
+          <div class="hbook" data-book="${b.id}">
+            <div class="hcover" style="${coverStyle(b)}"><span>${b.title}</span></div>
+            <div class="hname">${b.title}</div>
+            <div class="hauthor">${b.author}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">人气榜单<span>实时更新</span></div>
+        </div>
+        <div class="rank-list">
+          ${hot.map((b,i)=>`
+            <div class="rank-item" data-book="${b.id}">
+              <div class="rank-no ${i<3?'top':''}">${i+1}</div>
+              <div class="rank-cover" style="${coverStyle(b)}"><span>${b.title}</span></div>
+              <div class="rank-info">
+                <div class="rank-name">${b.title}</div>
+                <div class="rank-desc">${b.desc}</div>
+                <div class="rank-tags">
+                  <span class="tag">${b.cat}</span>
+                  ${b.tags.slice(0,2).map(t=>`<span class="tag gray">${t}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">猜你喜欢</div>
+        </div>
+        <div class="book-grid">
+          ${BOOKS.slice(0,8).map(b=>bookCardHTML(b)).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  bindBookLinks(app);
+  app.querySelector('[data-go-search]').addEventListener('click', ()=> go('/search'));
+  app.querySelectorAll('[data-cat]').forEach(el=>{
+    el.addEventListener('click', ()=> go('/category/'+encodeURIComponent(el.dataset.cat)));
+  });
+  app.querySelectorAll('[data-go-cat]').forEach(el=>{
+    el.addEventListener('click', ()=> go('/category/'+encodeURIComponent(el.dataset.goCat)));
+  });
+
+  // 轮播自动滚动
+  const banner = document.getElementById('banner');
+  if (banner){
+    let idx = 0;
+    setInterval(()=>{
+      idx = (idx+1) % featured.length;
+      banner.scrollTo({left: idx * (banner.clientWidth * 0.84 + 12), behavior:'smooth'});
+    }, 4200);
+  }
+  scrollTop();
+}
+
+/* ==========================================================
+   六、分类页
+   ========================================================== */
+function renderCategory(activeCat){
+  renderTabbar('category');
+  document.title = '分类 · 拾页免费小说';
+  const cat = CATEGORIES.find(c=>c.key===activeCat) ? activeCat : '全部';
+  const list = catBooks(cat);
+
+  app.innerHTML = `
+    <div class="page">
+      <div class="topbar">
+        <div class="brand">分类</div>
+        <div class="search-box" data-go-search>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+          </svg>
+          <span>搜索书名、作者</span>
+        </div>
+      </div>
+
+      <div class="cat-tabs">
+        ${CATEGORIES.map(c=>`
+          <div class="cat-tab ${c.key===cat?'on':''}" data-cat="${c.key}">${c.icon} ${c.key}</div>
+        `).join('')}
+      </div>
+
+      <div class="book-grid">
+        ${list.map(b=>bookCardHTML(b)).join('')}
+      </div>
+      <div class="load-more">— 已经到底啦 —</div>
+    </div>
+  `;
+
+  bindBookLinks(app);
+  app.querySelector('[data-go-search]').addEventListener('click', ()=> go('/search'));
+  app.querySelectorAll('[data-cat]').forEach(el=>{
+    el.addEventListener('click', ()=> go('/category/'+encodeURIComponent(el.dataset.cat)));
+  });
+  scrollTop();
+}
+
+/* ==========================================================
+   七、书籍详情页
+   ========================================================== */
+function renderBookDetail(id){
+  renderTabbar(null);
+  const book = byId(id);
+  if (!book){ go('/'); return; }
+  document.title = book.title + ' · 拾页免费小说';
+
+  const p = progress[book.id];
+  const inShelf = shelf.includes(book.id);
+  const startCh = p ? p.chapter : 0;
+
+  app.innerHTML = `
+    <div class="page" style="padding-bottom:80px">
+      <div class="detail-hero">
+        <button class="back-btn" data-back>‹</button>
+        <div class="detail-inner">
+          <div class="detail-cover" style="${coverStyle(book)}"><span>${book.title}</span></div>
+          <div class="detail-meta">
+            <div class="detail-title">${book.title}</div>
+            <div class="detail-author">${book.author} · ${book.cat}</div>
+            <div class="detail-stats">
+              <span>${book.status}</span>
+              <span>${book.words}</span>
+              <span>${book.chapters.length} 章</span>
+            </div>
+            <div class="detail-tags">
+              ${book.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-block">
+          <h3>内容简介 <em data-toggle-desc>展开 ∨</em></h3>
+          <div class="desc-text clamp" id="descText">${book.desc}</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>目录 <em>共 ${book.chapters.length} 章</em></h3>
+          <div class="chapter-list">
+            ${book.chapters.map((c,i)=>`
+              <div class="chapter-row ${p && i<p.chapter ? 'read' : ''}" data-ch="${i}">
+                <span>${c.title}</span>
+                <span class="cr-right">
+                  ${p && i===p.chapter ? '<i class="new-dot"></i>' : ''}
+                  ${p && i===p.chapter ? '读到此处' : ''}
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      <button class="btn-sub ${inShelf?'on':''}" data-shelf>
+        ${inShelf ? '✓ 已在书架' : '+ 加入书架'}
+      </button>
+      <button class="btn-main" data-read>
+        ${p ? `继续阅读 第${p.chapter+1}章` : '开始阅读'}
+      </button>
+    </div>
+  `;
+
+  app.querySelector('[data-back]').addEventListener('click', ()=>{
+    if (history.length > 1) history.back(); else go('/');
+  });
+
+  app.querySelector('[data-read]').addEventListener('click', ()=>{
+    go(`/read/${book.id}/${startCh}`);
+  });
+
+  app.querySelector('[data-shelf]').addEventListener('click', function(){
+    if (shelf.includes(book.id)){
+      shelf = shelf.filter(x=>x!==book.id);
+    } else {
+      shelf.push(book.id);
+    }
+    saveShelf();
+    renderBookDetail(id);
+  });
+
+  app.querySelectorAll('[data-ch]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      go(`/read/${book.id}/${el.dataset.ch}`);
+    });
+  });
+
+  const toggle = app.querySelector('[data-toggle-desc]');
+  const desc = document.getElementById('descText');
+  toggle.addEventListener('click', ()=>{
+    const clamped = desc.classList.toggle('clamp');
+    toggle.textContent = clamped ? '展开 ∨' : '收起 ∧';
+  });
+
+  scrollTop();
+}
+
+/* ==========================================================
+   八、阅读器
+   ========================================================== */
+let readerState = { book:null, index:0 };
+
+function renderReader(id, chIdx){
+  renderTabbar(null);
+  const book = byId(id);
+  if (!book){ go('/'); return; }
+
+  const index = Math.max(0, Math.min(chIdx, book.chapters.length - 1));
+  const chapter = book.chapters[index];
+  readerState = { book, index };
+  document.title = chapter.title;
+
+  app.innerHTML = `
+    <div class="reader theme-${settings.theme}" id="reader">
+      <div class="reader-top" id="readerTop">
+        <button class="rt-btn" data-back>‹</button>
+        <div class="rt-title">${chapter.title}</div>
+        <button class="rt-btn" data-toc>☰</button>
+      </div>
+
+      <div class="reader-content" id="readerContent">
+        <h1>${chapter.title}</h1>
+        ${chapter.paras.map(p=>`<p>${p}</p>`).join('')}
+        <div class="reader-nav">
+          <button data-prev ${index===0?'disabled':''}>← 上一章</button>
+          <button data-next ${index===book.chapters.length-1?'disabled':''}>下一章 →</button>
+        </div>
+        <div style="text-align:center;font-size:12px;color:var(--r-sub);margin-top:26px">— 本章完 —</div>
+      </div>
+
+      <div class="reader-bottom" id="readerBottom">
+        <div class="rb-progress">
+          <span>${index+1}/${book.chapters.length}</span>
+          <div class="rb-bar"><i id="rbFill"></i></div>
+          <span id="rbPct">0%</span>
+        </div>
+        <div class="rb-actions">
+          <button data-toc><i>☰</i>目录</button>
+          <button data-prev><i>◀</i>上一章</button>
+          <button data-next><i>▶</i>下一章</button>
+          <button data-set><i>Aa</i>设置</button>
+        </div>
+      </div>
+
+      <div class="mask" id="rMask"></div>
+      <div class="r-drawer" id="rDrawer">
+        <div class="r-drawer-head">目录<em>共 ${book.chapters.length} 章</em></div>
+        <div class="r-drawer-list">
+          ${book.chapters.map((c,i)=>`
+            <a class="r-drawer-item ${i===index?'active':''}" data-drawer-ch="${i}">${c.title}</a>
+          `).join('')}
+        </div>
+      </div>
+      <div class="set-panel" id="setPanel"></div>
+    </div>
+  `;
+
+  applyReaderStyle();
+  requestAnimationFrame(()=>{
+    const p = progress[book.id];
+    if (p && p.chapter === index && p.ratio > 0.02){
+      const el = document.getElementById('reader');
+      el.scrollTop = p.ratio * (el.scrollHeight - el.clientHeight);
+    }
+    updateReaderProgress();
+  });
+
+  bindReader(book, index);
+}
+
+function applyReaderStyle(){
+  const reader = document.getElementById('reader');
+  if (!reader) return;
+  reader.className = 'reader theme-' + settings.theme;
+  reader.style.setProperty('--r-fs', settings.fs + 'px');
+  reader.style.setProperty('--r-lh', settings.lh);
+  reader.style.setProperty('--r-font', settings.serif
+    ? '"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,serif'
+    : '-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif');
+}
+
+function updateReaderProgress(){
+  const reader = document.getElementById('reader');
+  const fill = document.getElementById('rbFill');
+  const pct = document.getElementById('rbPct');
+  if (!reader || !fill) return;
+  const max = reader.scrollHeight - reader.clientHeight;
+  const ratio = max > 0 ? Math.min(1, Math.max(0, reader.scrollTop / max)) : 1;
+  fill.style.width = (ratio*100) + '%';
+  if (pct) pct.textContent = Math.round(ratio*100) + '%';
+  return ratio;
+}
+
+function bindReader(book, index){
+  const reader = document.getElementById('reader');
+  const topBar = document.getElementById('readerTop');
+  const bottomBar = document.getElementById('readerBottom');
+  const mask = document.getElementById('rMask');
+  const drawer = document.getElementById('rDrawer');
+  const setPanel = document.getElementById('setPanel');
+  const content = document.getElementById('readerContent');
+
+  const closePanels = ()=>{
+    drawer.classList.remove('open');
+    setPanel.classList.remove('open');
+    mask.classList.remove('show');
+  };
+  const toggleMenu = ()=>{
+    topBar.classList.toggle('hide');
+    bottomBar.classList.toggle('hide');
+  };
+
+  // 返回
+  app.querySelectorAll('[data-back]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      saveReaderProgress();
+      go('/book/' + book.id);
+    });
+  });
+
+  // 目录
+  app.querySelectorAll('[data-toc]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const open = drawer.classList.contains('open');
+      closePanels();
+      if (!open){ drawer.classList.add('open'); mask.classList.add('show'); }
+    });
+  });
+
+  // 设置
+  app.querySelectorAll('[data-set]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const open = setPanel.classList.contains('open');
+      closePanels();
+      if (!open){
+        setPanel.innerHTML = renderSetPanel();
+        bindSetPanel(setPanel);
+        setPanel.classList.add('open');
+        mask.classList.add('show');
+      }
+    });
+  });
+
+  mask.addEventListener('click', closePanels);
+
+  // 目录跳转
+  drawer.querySelectorAll('[data-drawer-ch]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      saveReaderProgress();
+      const ch = el.dataset.drawerCh;
+      closePanels();
+      if (parseInt(ch,10) === index) return;
+      go(`/read/${book.id}/${ch}`);
+    });
+  });
+
+  // 上下章
+  const goto = d => {
+    const n = index + d;
+    if (n < 0 || n >= book.chapters.length) return;
+    saveReaderProgress();
+    go(`/read/${book.id}/${n}`);
+  };
+  app.querySelectorAll('[data-prev]').forEach(el=> el.addEventListener('click', ()=> goto(-1)));
+  app.querySelectorAll('[data-next]').forEach(el=> el.addEventListener('click', ()=> goto(1)));
+
+  // 点击正文中间切换菜单
+  let touchStartY = 0, touchStartX = 0;
+  content.addEventListener('click', e=>{
+    if (e.target.closest('button')) return;
+    toggleMenu();
+  });
+
+  // 滚动更新进度
+  let timer = null;
+  reader.addEventListener('scroll', ()=>{
+    updateReaderProgress();
+    if (timer) return;
+    timer = setTimeout(()=>{ timer=null; saveReaderProgress(); }, 260);
+  }, {passive:true});
+
+  // 键盘
+  reader.addEventListener('keydown', ()=>{});
+}
+
+function saveReaderProgress(){
+  const reader = document.getElementById('reader');
+  if (!reader || !readerState.book) return;
+  const max = reader.scrollHeight - reader.clientHeight;
+  const ratio = max > 0 ? Math.min(1, Math.max(0, reader.scrollTop / max)) : 0;
+  saveProgress(readerState.book.id, readerState.index, ratio);
+}
+
+function renderSetPanel(){
+  const themes = [
+    {k:'day', label:'日间', color:'#ffffff'},
+    {k:'green', label:'护眼', color:'#e3edcd'},
+    {k:'night', label:'夜间', color:'#1a1a1a'}
+  ];
+  return `
+    <div class="set-row">
+      <span class="set-label">主题</span>
+      <div class="set-group">
+        ${themes.map(t=>`
+          <div class="set-circle ${settings.theme===t.k?'on':''}"
+               style="background:${t.color};border-color:${t.color==='#ffffff'?'#ddd':'transparent'}"
+               data-theme="${t.k}" title="${t.label}"></div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">字号</span>
+      <div class="set-group">
+        <button class="set-step" data-fs="-1">A－</button>
+        <span class="set-value">${settings.fs}</span>
+        <button class="set-step" data-fs="1">A＋</button>
+        <span style="flex:1"></span>
+        <span style="font-size:12px;color:var(--sub)">左右滑动调节</span>
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">行距</span>
+      <div class="set-group">
+        ${[[1.6,'紧凑'],[1.9,'适中'],[2.2,'宽松']].map(([v,t])=>`
+          <div class="set-chip ${settings.lh===v?'on':''}" data-lh="${v}">${t}</div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="set-row">
+      <span class="set-label">字体</span>
+      <div class="set-group">
+        <div class="set-chip ${settings.serif?'on':''}" data-serif="1">宋体</div>
+        <div class="set-chip ${!settings.serif?'on':''}" data-serif="0">黑体</div>
+      </div>
+    </div>
+  `;
+}
+
+function bindSetPanel(panel){
+  panel.querySelectorAll('[data-theme]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      settings.theme = el.dataset.theme;
+      saveSettings();
+      applyReaderStyle();
+      panel.innerHTML = renderSetPanel();
+      bindSetPanel(panel);
+    });
+  });
+  panel.querySelectorAll('[data-fs]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      settings.fs = Math.min(28, Math.max(15, settings.fs + parseInt(el.dataset.fs,10)));
+      saveSettings();
+      applyReaderStyle();
+      panel.innerHTML = renderSetPanel();
+      bindSetPanel(panel);
+    });
+  });
+  panel.querySelectorAll('[data-lh]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      settings.lh = parseFloat(el.dataset.lh);
+      saveSettings();
+      applyReaderStyle();
+      panel.innerHTML = renderSetPanel();
+      bindSetPanel(panel);
+    });
+  });
+  panel.querySelectorAll('[data-serif]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      settings.serif = el.dataset.serif === '1';
+      saveSettings();
+      applyReaderStyle();
+      panel.innerHTML = renderSetPanel();
+      bindSetPanel(panel);
+    });
+  });
+}
+
+/* ==========================================================
+   九、书架页
+   ========================================================== */
+function renderShelf(){
+  renderTabbar('shelf');
+  document.title = '书架 · 拾页免费小说';
+
+  if (!shelf.length){
+    app.innerHTML = `
+      <div class="page">
+        <div class="topbar"><div class="brand">书架</div></div>
+        <div class="empty">
+          <div class="e-icon">📚</div>
+          <p>书架空空如也<br>去挑几本喜欢的书吧</p>
+          <button data-go-home>去逛逛</button>
+        </div>
+      </div>`;
+    app.querySelector('[data-go-home]').addEventListener('click', ()=> go('/'));
+    scrollTop();
+    return;
+  }
+
+  const list = shelf.map(id=>byId(id)).filter(Boolean);
+
+  app.innerHTML = `
+    <div class="page">
+      <div class="topbar">
+        <div class="brand">书架</div>
+        <div style="flex:1"></div>
+        <div style="color:#fff;font-size:12.5px;opacity:.9">${list.length} 本</div>
+      </div>
+      <div class="shelf-list">
+        ${list.map(b=>{
+          const p = progress[b.id];
+          const sub = p ? `读至第${p.chapter+1}章` : '尚未开始';
+          return `
+            <div class="shelf-item" data-book="${b.id}">
+              <div class="shelf-cover" style="${coverStyle(b)}"><span>${b.title}</span></div>
+              <div class="shelf-info">
+                <div class="shelf-name">${b.title}</div>
+                <div class="shelf-author">${b.author} · ${b.cat}</div>
+                <div class="shelf-prog">${sub}</div>
+              </div>
+              <div class="shelf-del" data-del="${b.id}">移除</div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
+  bindBookLinks(app);
+  app.querySelectorAll('[data-del]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      shelf = shelf.filter(x=>x !== el.dataset.del);
+      saveShelf();
+      renderShelf();
+    });
+  });
+  scrollTop();
+}
+
+/* ==========================================================
+   十、我的页面
+   ========================================================== */
+function renderMine(){
+  renderTabbar('mine');
+  document.title = '我的 · 拾页免费小说';
+
+  const recent = Object.keys(progress).length;
+
+  app.innerHTML = `
+    <div class="page">
+      <div class="mine-head">
+        <div class="mine-avatar">👤</div>
+        <div>
+          <div class="mine-name">书友_拾页</div>
+          <div class="mine-sub">已读 ${recent} 本 · 书架 ${shelf.length} 本</div>
+        </div>
+      </div>
+
+      <div class="mine-list">
+        <div class="mine-row" data-go="/shelf">
+          <div class="mr-left"><span class="mr-icon">📚</span>我的书架</div>
+          <div class="mr-right">${shelf.length} 本 ›</div>
+        </div>
+        <div class="mine-row" data-go="/category/全部">
+          <div class="mr-left"><span class="mr-icon">🔥</span>热门榜单</div>
+          <div class="mr-right">›</div>
+        </div>
+        <div class="mine-row" data-go="/search">
+          <div class="mr-left"><span class="mr-icon">🔍</span>搜索小说</div>
+          <div class="mr-right">›</div>
+        </div>
+      </div>
+
+      <div class="mine-list">
+        <div class="mine-row" data-clear-progress>
+          <div class="mr-left"><span class="mr-icon">🕐</span>清空阅读记录</div>
+          <div class="mr-right">›</div>
+        </div>
+        <div class="mine-row" data-clear-all>
+          <div class="mr-left"><span class="mr-icon">🗑️</span>清空书架</div>
+          <div class="mr-right">›</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:30px;font-size:11.5px;color:var(--sub)">
+        拾页免费小说 · 演示版本
+      </div>
+    </div>
+  `;
+
+  app.querySelectorAll('[data-go]').forEach(el=>{
+    el.addEventListener('click', ()=> go(el.dataset.go));
+  });
+  app.querySelector('[data-clear-progress]').addEventListener('click', ()=>{
+    if (confirm('确定清空所有阅读记录吗？')){
+      progress = {};
+      store.set('sy:progress', progress);
+      renderMine();
+    }
+  });
+  app.querySelector('[data-clear-all]').addEventListener('click', ()=>{
+    if (confirm('确定清空书架吗？')){
+      shelf = [];
+      saveShelf();
+      renderMine();
+    }
+  });
+  scrollTop();
+}
+
+/* ==========================================================
+   十一、搜索页
+   ========================================================== */
+function renderSearch(){
+  renderTabbar(null);
+  document.title = '搜索 · 拾页免费小说';
+
+  const hotWords = ['战神','重生','星际','武侠','言情','志怪','都市','青瓦巷'];
+
+  app.innerHTML = `
+    <div class="page search-page">
+      <div class="search-bar">
+        <button data-back style="font-size:18px;color:var(--text)">‹</button>
+        <input id="searchInput" type="search" placeholder="搜索书名、作者" autocomplete="off">
+        <button data-do-search>搜索</button>
+      </div>
+      <div id="searchResult"></div>
+      <div class="hot-words" id="hotWords">
+        <h4>热门搜索</h4>
+        <div class="hot-tags">
+          ${hotWords.map(w=>`<div class="hot-tag" data-word="${w}">${w}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  app.querySelector('[data-back]').addEventListener('click', ()=>{
+    if (history.length > 1) history.back(); else go('/');
+  });
+
+  const input = document.getElementById('searchInput');
+  const result = document.getElementById('searchResult');
+  const hotArea = document.getElementById('hotWords');
+
+  const doSearch = ()=>{
+    const kw = input.value.trim();
+    if (!kw){ result.innerHTML=''; hotArea.style.display='block'; return; }
+    hotArea.style.display = 'none';
+    const list = BOOKS.filter(b=>
+      b.title.includes(kw) || b.author.includes(kw) ||
+      b.cat.includes(kw) || b.tags.some(t=>t.includes(kw))
+    );
+    if (!list.length){
+      result.innerHTML = `<div class="empty"><div class="e-icon">🔍</div><p>没有找到相关书籍</p></div>`;
+      return;
+    }
+    result.innerHTML = `
+      <div class="book-grid" style="padding-top:16px">
+        ${list.map(b=>bookCardHTML(b)).join('')}
+      </div>`;
+    bindBookLinks(result);
+  };
+
+  app.querySelector('[data-do-search]').addEventListener('click', doSearch);
+  input.addEventListener('keydown', e=>{ if (e.key==='Enter') doSearch(); });
+  input.addEventListener('input', ()=>{ if(!input.value.trim()){ result.innerHTML=''; hotArea.style.display='block'; } });
+
+  app.querySelectorAll('[data-word]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      input.value = el.dataset.word;
+      doSearch();
+    });
+  });
+
+  setTimeout(()=> input.focus(), 100);
+  scrollTop();
+}
+
+/* ==========================================================
+   十二、路由调度
+   ========================================================== */
+function render(){
+  const r = parseRoute();
+  switch(r.v){
+    case 'read': renderReader(r.id, r.ch); break;
+    case 'book': renderBookDetail(r.id); break;
+    case 'category': renderCategory(r.cat); break;
+    case 'shelf': renderShelf(); break;
+    case 'mine': renderMine(); break;
+    case 'search': renderSearch(); break;
+    default: renderHome();
+  }
+}
+
+window.addEventListener('hashchange', render);
+
+// 阅读器内滚动保存进度
+window.addEventListener('beforeunload', ()=>{
+  if (parseRoute().v === 'read') saveReaderProgress();
+});
+
+// 全局键盘（阅读器左右翻章）
+document.addEventListener('keydown', e=>{
+  if (parseRoute().v !== 'read') return;
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowLeft') app.querySelector('[data-prev]')?.click();
+  if (e.key === 'ArrowRight') app.querySelector('[data-next]')?.click();
+  if (e.key === 'Escape'){
+    document.getElementById('rMask')?.classList.remove('show');
+    document.getElementById('rDrawer')?.classList.remove('open');
+    document.getElementById('setPanel')?.classList.remove('open');
+  }
+});
+
+// 启动
+render();
+</script>
+</body>
+</html>
